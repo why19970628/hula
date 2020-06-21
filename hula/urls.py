@@ -30,6 +30,9 @@ urlpatterns = [
     url(r'drf/article/$', views.ArticleView.as_view()),
     url(r'drf/article/(?P<pk>\d+)/$', views.ArticleView.as_view()),
 
+    url(r'^new/article/$', views.NewArticleView.as_view()),
+    url(r'^new/article/(?P<pk>\d+)/$', views.NewArticleView.as_view()),
+
 
     
 ]

@@ -82,46 +82,48 @@ class NewCategoryView(ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
     serializer_class = NewCategorySerializer
 
 
-# class NewCategoryView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         pk = kwargs.get('pk')
-#         print(pk)
-#         if not pk:
-#             queryset = models.Category.objects.all()
-#             ser = NewCategorySerializer(instance=queryset, many=True)
-#             return Response(ser.data)
-#         else:
-#             model_object = models.Category.objects.filter(id=pk).first()
-#             ser = NewCategorySerializer(instance=model_object, many=False)
-#             return Response(ser.data)
+class NewCategoryView(APIView):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        print(pk)
+        if not pk:
+            queryset = models.Category.objects.all()
+            ser = NewCategorySerializer(instance=queryset, many=True)
+            return Response(ser.data)
+        else:
+            model_object = models.Category.objects.filter(id=pk).first()
+            ser = NewCategorySerializer(instance=model_object, many=False)
+            return Response(ser.data)
 
-#     def post(self, request, *args, **kwargs):
-#         ser = NewCategorySerializer(data=request.data)
-#         if ser.is_valid():
-#             ser.save()
-#             return Response(ser.data)
-#         return Response(ser.errors)
+    def post(self, request, *args, **kwargs):
+        ser = NewCategorySerializer(data=request.data)
+        if ser.is_valid():
+            ser.save()
+            return Response(ser.data)
+        return Response(ser.errors)
 
-#     def put(self, request, *args, **kwargs):
-#         pk = kwargs.get('pk')
-#         category_object = models.Category.objects.filter(id=pk).first()
-#         ser = NewCategorySerializer(instance=category_object,data=request.data)
-#         if ser.is_valid():
-#             ser.save()
-#             return Response(ser.data)
-#         return Response(ser.errors)
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        category_object = models.Category.objects.filter(id=pk).first()
+        ser = NewCategorySerializer(
+            instance=category_object, data=request.data)
+        if ser.is_valid():
+            ser.save()
+            return Response(ser.data)
+        return Response(ser.errors)
 
-#     def delete(self, request, *args, **kwargs):
-#         """
-#         删除一条分类信息
-#         """
-#         pk = kwargs.get('pk')
-#         if not pk:
-#             return Response('请选择删除的 id')
-#         data = models.Category.objects.filter(id=pk).delete()
-#         if data[0] == 0:
-#             return Response('删除--无此数据')
-#         return Response('删除成功')
+    def delete(self, request, *args, **kwargs):
+        """
+        删除一条分类信息
+        """
+        pk = kwargs.get('pk')
+        if not pk:
+            return Response('请选择删除的 id')
+        data = models.Category.objects.filter(id=pk).delete()
+        if data[0] == 0:
+            return Response('删除--无此数据')
+        return Response('删除成功')
+
 
 class ArticleView(APIView):
     def get(self, request, *args, **kwargs):
@@ -173,4 +175,52 @@ class ArticleView(APIView):
         data = models.Article.objects.filter(id=pk).delete()
         if data[0] == 0:
             return Response('删除--无此数据')
+        return Response('删除成功')
+
+
+class NewArticleView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        if not pk:
+            queryset = models.Article.objects.all()
+            ser = serializer.NewArticleSerializer(instance=queryset, many=True)
+            return Response(ser.data)
+        article_object = models.Article.objects.filter(id=pk).first()
+        ser = serializer.NewArticleSerializer(
+            instance=article_object, many=False)
+        return Response(ser.data)
+
+    def post(self, request, *args, **kwargs):
+        ser = serializer.FormNewArticleSerializer(data=request.data)
+        if ser.is_valid():
+            ser.save()
+            return Response(ser.data)
+        return Response(ser.errors)
+
+    def put(self, request, *args, **kwargs):
+        """全部更新"""
+        pk = kwargs.get('pk')
+        article_object = models.Article.objects.filter(id=pk).first()
+        ser = serializer.FormNewArticleSerializer(
+            instance=article_object, data=request.data)
+        if ser.is_valid():
+            ser.save()
+            return Response(ser.data)
+        return Response(ser.errors)
+
+    def patch(self, request, *args, **kwargs):
+        """局部"""
+        pk = kwargs.get('pk')
+        article_object = models.Article.objects.filter(id=pk).first()
+        ser = serializer.FormNewArticleSerializer(
+            instance=article_object, data=request.data, partial=True)
+        if ser.is_valid():
+            ser.save()
+            return Response(ser.data)
+        return Response(ser.errors)
+
+    def delete(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        models.Article.objects.filter(id=pk).delete()
         return Response('删除成功')

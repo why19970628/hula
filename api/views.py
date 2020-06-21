@@ -1,3 +1,5 @@
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework import serializers
 from django.shortcuts import render
@@ -224,3 +226,40 @@ class NewArticleView(APIView):
         pk = kwargs.get('pk')
         models.Article.objects.filter(id=pk).delete()
         return Response('删除成功')
+
+
+class HulaLimitOffsetPagination(LimitOffsetPagination):
+    max_limit = 2
+
+
+class PageArticleView(APIView):
+    def get(self, request, *args, **kwargs):
+        queryset = models.Article.objects.all()
+
+        # 方式一：仅数据
+        """
+        page_object = PageNumberPagination()
+        result = page_object.paginate_queryset(queryset,request,self)
+        ser = PageArticleSerializer(instance=result,many=True)
+        return Response(ser.data)
+        """
+        # 方式二：数据 + 分页信息
+        """
+        page_object = PageNumberPagination()
+        result = page_object.paginate_queryset(queryset, request, self)
+        ser = PageArticleSerializer(instance=result, many=True)
+        return page_object.get_paginated_response(ser.data)
+        """
+        # 方式三：数据 + 部分分页信息, 如分页页数等等
+        """
+        page_object = PageNumberPagination()
+        result = page_object.paginate_queryset(queryset, request, self)
+        ser = PageArticleSerializer(instance=result, many=True)
+        return Response({'count':page_object.page.paginator.count,'result':ser.data})
+        """
+        
+        # offset=1&limit=2, 从第一条数据后、取两条数据
+        page_object = HulaLimitOffsetPagination()
+        result = page_object.paginate_queryset(queryset, request, self)
+        ser = PageArticleSerializer(instance=result, many=True)
+        return Response(ser.data)

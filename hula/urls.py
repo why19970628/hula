@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.conf.urls import url
+from django.conf.urls import url, include
 from api import views
 
 urlpatterns = [
@@ -35,7 +35,8 @@ urlpatterns = [
 
     # 分页
     url(r'^page/article/$', views.PageArticleView.as_view()),
-
-
     
+]
+urlpatterns += [
+    url(r'^hg/', include('hg.urls')),
 ]
